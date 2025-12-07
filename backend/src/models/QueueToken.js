@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const QueueTokenSchema = new Schema(
   {
-    tokenNumber: Number,
-    staffId: { type: Schema.Types.ObjectId, ref: "Staff" },
-    customerId: { type: Schema.Types.ObjectId, ref: "User" },
+    tokenNumber: { type: Number, required: true },
+    staffId: { type: Schema.Types.ObjectId, ref: "Staff", required: true },
+    customerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     status: {
       type: String,
       enum: ["waiting", "serving", "done"],
@@ -18,5 +18,6 @@ const QueueTokenSchema = new Schema(
 );
 
 QueueTokenSchema.index({ staffId: 1 });
+QueueTokenSchema.index({ customerId: 1 });
 
 export default mongoose.model("QueueToken", QueueTokenSchema);
