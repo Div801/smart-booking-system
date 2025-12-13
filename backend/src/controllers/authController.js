@@ -59,4 +59,8 @@ const refreshToken = async (req, res) => {
   }
 };
 
-export { loginUser, refreshToken };
+const logoutUser = (req, res) => {
+  return res.json({ message: "Logged out" });
+};
+
+export { loginUser, refreshToken, logoutUser };
