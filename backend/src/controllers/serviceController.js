@@ -20,4 +20,13 @@ const createService = async (req, res, next) => {
   }
 };
 
-export { createService };
+const getServices = async (req, res, next) => {
+  try {
+    const services = await Service.find();
+    res.json(services);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createService, getServices };
