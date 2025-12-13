@@ -50,4 +50,27 @@ const getStaffList = async (req, res, next) => {
   }
 };
 
-export { createStaff, getStaffList };
+const updateStaff = async (req, res, next) => {
+  try {
+    const { staffId } = req.params;
+    const { specialties, availability } = req.body;
+
+    const updateData = {};
+    if (specialties !== undefined) updateData.specialties = specialties;
+    if (availability !== undefined) updateData.availability = availability;
+
+    const staff = await Staff.findByIdAndUpdate(staffId, updateData, {
+      new: true,
+    }).populate("userId");
+
+    if (!staff) {
+      return res.status(404).json({ message: "Staff not found" });
+    }
+
+    res.json(staff);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createStaff, getStaffList, updateStaff };
