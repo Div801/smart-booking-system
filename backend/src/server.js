@@ -4,6 +4,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import indexRoutes from "./routes/index.js";
+import authRoutes from "./routes/authRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import User from "./models/User.js";
 import Staff from "./models/Staff.js";
@@ -21,6 +22,7 @@ app.use(morgan('dev'));
 
 connectDB();
 
+app.use("/api/auth", authRoutes);
 app.use("/api", indexRoutes);
 
 app.get("/testmodels", async (req, res, next) => {
