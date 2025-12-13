@@ -1,4 +1,5 @@
 import Service from "../models/Service.js";
+import Staff from "../models/Staff.js";
 
 const createService = async (req, res, next) => {
   try {
@@ -69,4 +70,39 @@ const deleteService = async (req, res, next) => {
   }
 };
 
-export { createService, getServices, updateService, deleteService };
+const assignServiceToStaff = async (req, res, next) => {
+  try {
+    const { serviceId, staffId } = req.params;
+
+    const service = await Service.findById(serviceId);
+    const staff = await Staff.findById(staffId);
+
+    if (!service || !staff) {
+      return res.status(404).json({ message: "Service or Staff not found" });
+    }
+
+    if (!service.staffAllowed.includes(staffId)) {
+      service.staffAllowed.push(staffId);
+    }
+
+    if (!staff.specialties.includes(serviceId)) {
+      staff.specialties.push(serviceId);
+    }
+
+    await Promise.all([service.save(), staff.save()]);
+
+    const updatedService = await Service.findById(serviceId).populate("staffAllowed");
+
+    res.json(updatedService);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  createService,
+  getServices,
+  updateService,
+  deleteService,
+  assignServiceToStaff,
+};
