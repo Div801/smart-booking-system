@@ -73,4 +73,23 @@ const updateStaff = async (req, res, next) => {
   }
 };
 
-export { createStaff, getStaffList, updateStaff };
+const toggleAvailability = async (req, res, next) => {
+  try {
+    const { staffId } = req.params;
+
+    const staff = await Staff.findById(staffId).populate("userId");
+
+    if (!staff) {
+      return res.status(404).json({ message: "Staff not found" });
+    }
+
+    staff.availability = !staff.availability;
+    await staff.save();
+
+    res.json(staff);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createStaff, getStaffList, updateStaff, toggleAvailability };
