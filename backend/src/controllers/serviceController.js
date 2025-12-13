@@ -53,4 +53,20 @@ const updateService = async (req, res, next) => {
   }
 };
 
-export { createService, getServices, updateService };
+const deleteService = async (req, res, next) => {
+  try {
+    const { serviceId } = req.params;
+
+    const deleted = await Service.findByIdAndDelete(serviceId);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    res.json({ message: "Service deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createService, getServices, updateService, deleteService };
