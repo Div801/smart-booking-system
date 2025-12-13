@@ -41,4 +41,13 @@ const createStaff = async (req, res, next) => {
   }
 };
 
-export { createStaff };
+const getStaffList = async (req, res, next) => {
+  try {
+    const staff = await Staff.find().populate("userId");
+    res.json(staff);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createStaff, getStaffList };
