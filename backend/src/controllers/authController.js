@@ -3,6 +3,42 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
 
+const registerUser = async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      email,
+      passwordHash,
+      role: "customer",
+    });
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    const { passwordHash: _omit, ...userData } = user.toObject();
+
+    res.status(201).json({ user: userData, token });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -63,4 +99,4 @@ const logoutUser = (req, res) => {
   return res.json({ message: "Logged out" });
 };
 
-export { loginUser, refreshToken, logoutUser };
+export { registerUser, loginUser, refreshToken, logoutUser };
