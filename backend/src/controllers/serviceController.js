@@ -29,4 +29,28 @@ const getServices = async (req, res, next) => {
   }
 };
 
-export { createService, getServices };
+const updateService = async (req, res, next) => {
+  try {
+    const { serviceId } = req.params;
+    const { name, durationMinutes, price } = req.body;
+
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (durationMinutes !== undefined) updateData.durationMinutes = durationMinutes;
+    if (price !== undefined) updateData.price = price;
+
+    const service = await Service.findByIdAndUpdate(serviceId, updateData, {
+      new: true,
+    });
+
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    res.json(service);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createService, getServices, updateService };
